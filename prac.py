@@ -20,4 +20,18 @@ plt.show()
 def relu(x):
     return np.maximum(0,x)
 
+def softmax(a):
+    c = np.max(a)
+    exp_a = np.exp(a-c) # for avoid the overflow problem!
+    sum_exp_a = np.sum(exp_a)
+    y = exp_a/sum_exp_a
+    return y
+
+def MSE(y,t):
+    return 0.5*np.sum((y-t)**2)
+
+def cross_entropy_error(y,t):
+    delta = 1e-7
+    return -np.sum(t*np.log(y+delta))
+
 
