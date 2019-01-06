@@ -4,11 +4,11 @@ import numpy as np
 sys.path.append("C:/Users/manggny/PycharmProjects/Project-pre/func")
 from xlutils.copy import copy
 import xlwt, xlrd
-from go.funcs import diff, make_list
-from go.funcs import raster_laser, div_by_laser,first_lick_plot,make_gonogolick,div_by_odor
+from go.funcs import diff, make_list,dPrime
+from go.funcs import raster_laser, div_by_laser,first_lick_plot,make_gonogolick,div_by_odor,averplot
 
 if __name__ == '__main__':
-	path = "F:/gonogodata/nodelay/laser"#D:\expdata\laser"#F:/gonogodata/nodelay/laser"#F:/gonogodata/nodelay/laser"
+	path = "F:/ACC-VGAT/GONOGO/chr2"#D:\expdata\laser"#F:/gonogodata/nodelay/laser"#F:/gonogodata/nodelay/laser"
 	filelist = os.listdir(path)
 	filelist_current = os.listdir()
 	exist = 0
@@ -33,15 +33,22 @@ if __name__ == '__main__':
 		sheet.write(0, 7, 'Laser miss')
 		sheet.write(0, 8, 'Laser FA')
 		sheet.write(0, 9, 'Laser CR')
-		sheet.write(0, 10, 'odor1 laser_lick')
-		sheet.write(0, 11, 'odor2 laser lick')
-		sheet.write(0, 12, 'no-Laser hit')
-		sheet.write(0, 13, 'no-Laser miss')
-		sheet.write(0, 14, 'no-Laser FA')
-		sheet.write(0, 15, 'no-Laser CR')
-		sheet.write(0, 16, 'odor1 no-laser_lick')
-		sheet.write(0, 17, 'odor2 no-laser_lick')
-
+		sheet.write(0, 10, 'Laser d')
+		sheet.write(0, 11, 'Laser beta')
+		sheet.write(0, 12, 'odor1 laser_lick')
+		sheet.write(0, 13, 'odor2 laser lick')
+		sheet.write(0, 14, 'odor1 laser_firstlick(ms)')
+		sheet.write(0, 15, 'odor2 laser_firstlick(ms)')
+		sheet.write(0, 16, 'no-Laser hit')
+		sheet.write(0, 17, 'no-Laser miss')
+		sheet.write(0, 18, 'no-Laser FA')
+		sheet.write(0, 19, 'no-Laser CR')
+		sheet.write(0, 20, 'no-Laser d')
+		sheet.write(0, 21, 'no-Laser b')
+		sheet.write(0, 22, 'odor1 no-laser_lick')
+		sheet.write(0, 23, 'odor2 no-laser_lick')
+		sheet.write(0, 24, 'odor1 no-laser_firstlick(ms)')
+		sheet.write(0, 25, 'odor2 no-laser_firstlick(ms)')
 		book.save('go_nogo_result_laser.xls')
 
 	for raw_file in filelist:
@@ -103,9 +110,11 @@ if __name__ == '__main__':
 		nolaser2_hit = 0
 		nolaser2_miss = 0
 		laser_trial = 0
+
 		for tri in range(len(odor1_lick[:, 1])):
 			if np.sum(odor1_laser[tri,0:200])>5:
 				laser_trial = 1
+
 			else:
 				laser_trial = 0
 
@@ -125,6 +134,7 @@ if __name__ == '__main__':
 					odor1_hit += 1
 					odor1_did = 1
 					if laser_trial == 1:
+
 						laser1_hit += 1
 					else:
 						nolaser1_hit += 1
@@ -201,7 +211,13 @@ if __name__ == '__main__':
 			accuracy = hit / (hit + miss)
 		else:
 			accuracy = 0
+		laser_out = dPrime(laser_hit,laser_miss,laser_fa,laser_cr)
+		nolaser_out = dPrime(nolaser_hit, nolaser_miss, nolaser_fa, nolaser_cr)
+		laser_d = laser_out['d']
+		laser_b = laser_out['b']
 
+		nolaser_d = nolaser_out['d']
+		nolaser_b = nolaser_out['b']
 
 		saved = 0
 		if (cr + fa) > 0:
@@ -227,11 +243,28 @@ if __name__ == '__main__':
 		print("===============================================end=============================================")
 
 		saved = 0
-
+		# print("test:",odor1_laser[21,0:500],odor1_action[21,0:500],odor1_pump[21,0:500],odor1_lick[21,290:500])
 		tr, ti = np.shape(odor1_laser_lick)
 		trn, tin = np.shape(odor1_nolaser_lick)
 		ntr, nti = np.shape(odor2_laser_lick)
 		trn2, tin2 = np.shape(odor2_nolaser_lick)
+		real_tr =0
+		real_trn = 0
+		real_ntr = 0
+		real_trn2 = 0
+		for i in range(len(odor1_laser_lick[:,1])):
+			if np.sum(odor1_laser_lick[i,200:500]) > 1:
+				real_tr += 1
+		for i in range(len(odor1_nolaser_lick[:, 1])):
+			if np.sum(odor1_nolaser_lick[i, 200:500]) > 1:
+				real_trn += 1
+		for i in range(len(odor2_laser_lick[:, 1])):
+			if np.sum(odor2_laser_lick[i, 200:500]) > 1:
+				real_ntr += 1
+		for i in range(len(odor2_nolaser_lick[:, 1])):
+			if np.sum(odor2_nolaser_lick[i, 200:500]) > 1:
+				real_trn2 += 1
+
 		print("trials!:\n")
 		print(ntr,trn2)
 		print(
@@ -245,10 +278,17 @@ if __name__ == '__main__':
 				break
 		odor1_plot = name + 'odor1 with laser'
 		odor2_plot = name + 'odor2 with laser'
+		odor1_aver_laser_first=0
+		odor1_aver_nolaser_first=0
+		odor2_aver_laser_first=0
+		odor2_aver_nolaser_first=0
 		if (np.sum(odor1_laser_lick) != 0):
-			first_lick_plot(odor1_laser_lick, odor1_nolaser_lick, odor1_plot,delay = 200)
+			odor1_aver_laser_first,odor1_aver_nolaser_first = first_lick_plot(odor1_laser_lick, odor1_nolaser_lick, odor1_plot,delay = 200)
+			averplot(odor1_laser_lick, odor1_nolaser_lick, odor1_plot)
+
 		if (np.sum(odor2_laser_lick) != 0):
-			first_lick_plot(odor2_laser_lick, odor2_nolaser_lick, odor2_plot,delay = 200)
+			odor2_aver_laser_first, odor2_aver_nolaser_first = first_lick_plot(odor2_laser_lick, odor2_nolaser_lick, odor2_plot,delay = 200)
+			averplot(odor2_laser_lick, odor2_nolaser_lick, odor2_plot)
 
 		if saved == 0:
 			sheet.write(len(saved_files), 0, name)
@@ -261,17 +301,26 @@ if __name__ == '__main__':
 			sheet.write(len(saved_files), 7, str(laser_miss))
 			sheet.write(len(saved_files), 8, str(laser_fa))
 			sheet.write(len(saved_files), 9, str(laser_cr))
-			sheet.write(len(saved_files), 10, str(np.sum(odor1_laser_lick)))
-			sheet.write(len(saved_files), 11, str(np.sum(odor2_laser_lick)))
-			sheet.write(len(saved_files), 12, str(nolaser_hit))
-			sheet.write(len(saved_files), 13, str(nolaser_miss))
-			sheet.write(len(saved_files), 14, str(nolaser_fa))
-			sheet.write(len(saved_files), 15, str(nolaser_cr))
-			sheet.write(len(saved_files), 16, str(np.sum(odor1_nolaser_lick)))
-			sheet.write(len(saved_files), 17, str(np.sum(odor2_nolaser_lick)))
+			sheet.write(len(saved_files), 10, str(laser_d))
+			sheet.write(len(saved_files), 11, str(laser_b))
+			sheet.write(len(saved_files), 12, str(np.sum(odor1_laser_lick[:,200:500])/real_tr))
+			sheet.write(len(saved_files), 13, str(np.sum(odor2_laser_lick[:,200:500])/real_ntr))
+			sheet.write(len(saved_files), 14, str(odor1_aver_laser_first))
+			sheet.write(len(saved_files), 15, str(odor2_aver_laser_first))
+			sheet.write(len(saved_files), 16, str(nolaser_hit))
+			sheet.write(len(saved_files), 17, str(nolaser_miss))
+			sheet.write(len(saved_files), 18, str(nolaser_fa))
+			sheet.write(len(saved_files), 19, str(nolaser_cr))
+			sheet.write(len(saved_files), 20, str(nolaser_d))
+			sheet.write(len(saved_files), 21, str(nolaser_b))
+			sheet.write(len(saved_files), 22, str(np.sum(odor1_nolaser_lick[:,200:500])/real_trn))
+			sheet.write(len(saved_files), 23, str(np.sum(odor2_nolaser_lick[:,200:500])/real_trn2))
+			sheet.write(len(saved_files), 24, str(odor1_aver_nolaser_first))
+			sheet.write(len(saved_files), 25, str(odor2_aver_nolaser_first))
 			os.remove('go_nogo_result_laser.xls')
 			newwb.save('go_nogo_result_laser.xls')
 		i = 0
+
 		for j in range(tr):
 			while i < ti:
 				try:

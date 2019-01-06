@@ -46,16 +46,26 @@ def make_list(filename):
 	odor1, odor2, lick, pump, action, airpuff, laser = [], [], [], [], [], [], []
 
 	for line in file:
-		odor1d, odor2d, lickd, pumpd, actiond, airpuffd, laserd = line.split()
+		odor1d, odor2d, lickd, pumpd, actiond, airpuffd, *laserd = line.split()
 		odor1.append(float(odor1d))
 		odor2.append(float(odor2d))
 		lick.append(float(lickd))
 		pump.append(float(pumpd))
 		action.append(float(actiond))
 		airpuff.append(float(airpuffd))
-		laser.append(float(laserd))
+		try:
+			laser.append(float(laserd))
+		except:
+			continue
 
-	return odor1,odor2,lick,pump,action,airpuff,laser
+
+
+	if len(laser) > 10:
+		return odor1, odor2, lick, pump, action, airpuff, laser
+	else:
+		return odor1, odor2, lick, pump, action, airpuff
+
+
 
 def make_list_record(filename):
 	file = open(filename)

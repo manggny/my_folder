@@ -8,7 +8,7 @@ from go.funcs import make_list,averplot
 from go.funcs import make_gonogolick, div_by_odor,raster
 
 if __name__ == '__main__':
-	path = "F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_GTACR1/training"
+	path = "F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/12.23_"
 	filelist = os.listdir(path)
 	filelist_current = os.listdir()
 	exist = 0
@@ -46,9 +46,9 @@ if __name__ == '__main__':
 		old_sheet = oldwb.sheet_by_index(0)
 		saved_files = old_sheet.col_values(0)
 		odor_time = 100
-		delay = 200
-		action_time = 500
-		relative_time = odor_time+delay+action_time
+		before_delay = 200
+		action_time = 200
+		relative_time = odor_time+action_time
 
 		print("================================================ start =======================================")
 
@@ -63,10 +63,14 @@ if __name__ == '__main__':
 			number, jieduan, day, godor, *_ = raw_file.split("_")
 		except:
 			continue
+		print('1')
 		odor1, odor2, lick, pump, action, airpuff, laser = make_list(filename)
+		print('2')
 		odor1_lick, odor2_lick = make_gonogolick(odor1, odor2, lick,delay = 200)
+		print('3')
 		odor1_action, odor1_airpuff, odor1_pump, odor1_laser, odor2_action, odor2_airpuff, odor2_pump, odor2_laser = div_by_odor(
 			odor1, odor2, action, airpuff, pump, laser,delay = 200)
+		print('4')
 		if godor == 'odor2':
 			whichsgo = 2
 		else:
@@ -90,17 +94,18 @@ if __name__ == '__main__':
 			# if tri<(cut_from*(0.8)) or tri>(cut_to*(0.8)):
 			# 	continue
 			odor1_did = 0
+
 			if np.sum(odor1_lick[tri,:]) == 0:
 				empty_odor1 += 1
 				#continue
 			for ms in range(len(odor1_lick[1, :])):
-				if (ms <= 800) and (odor1_lick[tri, ms] == 1):
+				if (ms <= 500) and (ms > before_delay) and (odor1_lick[tri, ms] == 1):
 					lickintime += 1
-				elif (ms > 800) and (ms <= 1900) and (odor1_lick[tri, ms] == 1):
+				elif (((ms > 500) and (ms <= 1900)) or (ms>=0 and ms <= before_delay)) and (odor1_lick[tri, ms] == 1):
 					lickiniti += 1
 				if (odor1_lick[tri, ms] == 1) and (odor1_action[tri, ms] == 1) and (odor1_did == 0):
 					if (np.sum(odor1_pump[tri, ms:ms + 50]) + np.sum(odor1_airpuff[tri, ms:ms + 50])) < 10:
-						print(tri)
+						print('beng',tri)
 
 					odor1_hit += 1
 					odor1_did = 1
@@ -112,13 +117,15 @@ if __name__ == '__main__':
 				empty_odor2 += 1
 				#continue
 			for ms in range(len(odor2_lick[1, :])):
-				if (ms <= relative_time) and (odor2_lick[tri, ms] == 1):
+
+				if (ms <= 500) and (ms > before_delay) and (odor2_lick[tri, ms] == 1):
 					lickintime += 1
-				elif (ms > relative_time) and (ms <= 1900) and (odor2_lick[tri, ms] == 1):
+				elif (((ms > 500) and (ms <= 1900)) or (ms >= 0 and ms <= before_delay)) and (
+								odor2_lick[tri, ms] == 1):
 					lickiniti += 1
 				if (odor2_lick[tri, ms] == 1) and (odor2_action[tri, ms] == 1) and (odor2_did == 0):
 					if (np.sum(odor2_pump[tri, ms:ms + 50]) + np.sum(odor2_airpuff[tri, ms:ms + 50])) < 10:
-						print(tri)
+						print('air',tri)
 					odor2_hit += 1
 					odor2_did = 1
 			if odor2_did == 0:
