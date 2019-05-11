@@ -8,7 +8,7 @@ from go.funcs import diff, make_list,dPrime
 from go.funcs import raster_laser, div_by_laser,first_lick_plot,make_gonogolick,div_by_odor,averplot
 
 if __name__ == '__main__':
-	path = "F:/ACC-VGAT/GONOGO/chr2"#D:\expdata\laser"#F:/gonogodata/nodelay/laser"#F:/gonogodata/nodelay/laser"
+	path = "F:/ACC-Camk2/0109~gonogo/gonogo test with laser"#D:\expdata\laser"#F:/gonogodata/nodelay/laser"#F:/gonogodata/nodelay/laser"
 	filelist = os.listdir(path)
 	filelist_current = os.listdir()
 	exist = 0
@@ -127,12 +127,11 @@ if __name__ == '__main__':
 					lickintime += 1
 				elif (ms > relative_time) and (ms <= 1900) and (odor1_lick[tri, ms] == 1):
 					lickiniti += 1
-				if (odor1_lick[tri, ms] == 1) and (odor1_action[tri, ms] == 1) and (odor1_did == 0):
-					if (np.sum(odor1_pump[tri, ms:ms + 50]) + np.sum(odor1_airpuff[tri, ms:ms + 50])) < 10:
-						print(tri)
-
-					odor1_hit += 1
-					odor1_did = 1
+				if (odor1_pump[tri, ms] == 1 or odor1_airpuff[tri, ms] == 1) and (odor1_did == 0):
+					if (np.sum(odor1_pump[tri, ms:ms + 50]) + np.sum(odor1_airpuff[tri, ms:ms + 50])) > 10:
+						#print(tri)
+						odor1_hit += 1
+						odor1_did = 1
 					if laser_trial == 1:
 
 						laser1_hit += 1
@@ -160,11 +159,11 @@ if __name__ == '__main__':
 					lickintime += 1
 				elif (ms > relative_time) and (ms <= 1900) and (odor2_lick[tri, ms] == 1):
 					lickiniti += 1
-				if (odor2_lick[tri, ms] == 1) and (odor2_action[tri, ms] == 1) and (odor2_did == 0):
-					if (np.sum(odor2_pump[tri, ms:ms + 50]) + np.sum(odor2_airpuff[tri, ms:ms + 50])) < 10:
-						print(tri)
-					odor2_hit += 1
-					odor2_did = 1
+				if (odor2_pump[tri, ms] == 1 or odor2_airpuff[tri, ms] == 1) and (odor2_did == 0):
+					if (np.sum(odor2_pump[tri, ms:ms + 50]) + np.sum(odor2_airpuff[tri, ms:ms + 50])) > 10:
+						#print(tri)
+						odor2_hit += 1
+						odor2_did = 1
 					if laser_trial == 1:
 						laser2_hit += 1
 					else:
@@ -212,6 +211,7 @@ if __name__ == '__main__':
 		else:
 			accuracy = 0
 		laser_out = dPrime(laser_hit,laser_miss,laser_fa,laser_cr)
+		print(nolaser_hit, nolaser_miss, nolaser_fa, nolaser_cr)
 		nolaser_out = dPrime(nolaser_hit, nolaser_miss, nolaser_fa, nolaser_cr)
 		laser_d = laser_out['d']
 		laser_b = laser_out['b']

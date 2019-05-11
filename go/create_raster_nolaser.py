@@ -8,7 +8,7 @@ from go.funcs import div_by_laser,make_gonogolick,div_by_odor,raster
 
 
 if __name__ == '__main__':
-	path = "F:/ACC-Camk2/GCAMP6/uncertainty"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/12.23_"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_GTACR1/onlygo"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/habi"
+	path = "F:/Insula-Gcamp6/behav/gonogo"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/12.23_"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_GTACR1/onlygo"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/habi"
 	filelist = os.listdir(path)
 	filelist_current = os.listdir()
 	exist = 0
@@ -70,7 +70,7 @@ if __name__ == '__main__':
 
 		number, jieduan, day, godor, Hz, *_ = raw_file.split("_")
 		odor1, odor2, lick, pump, action, airpuff, laser = make_list(filename)
-		odor1_lick,odor2_lick = make_gonogolick(odor1,odor2,lick,delay=0)
+		odor1_lick,odor2_lick = make_gonogolick(odor1,odor2,lick,delay=200)
 		odor1_action, odor1_airpuff, odor1_pump, odor1_laser, odor2_action, odor2_airpuff, odor2_pump, odor2_laser = div_by_odor(odor1,odor2,action,airpuff,pump,laser,delay=200)
 
 
@@ -121,4 +121,4 @@ if __name__ == '__main__':
 		else:
 			raster(odor1_lick, odor2_lick, name, "Go_trials_lick", "No-Go_trials_lick")
 
-		print(len(odor1_lick[1,:]))
+		#print(len(odor1_lick[1,:]))

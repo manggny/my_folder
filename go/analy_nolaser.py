@@ -4,17 +4,17 @@ import numpy as np
 sys.path.append("C:/Users/manggny/PycharmProjects/Project-pre/func")
 from xlutils.copy import copy
 import xlwt, xlrd
-from go.funcs import make_list,averplot
+from go.funcs import make_list,averplot,dPrime
 from go.funcs import make_gonogolick, div_by_odor,raster
 
 if __name__ == '__main__':
-	path = "F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/12.23_"
+	path = "F:/Insula-Gcamp6/behav/gonogo"
 	filelist = os.listdir(path)
 	filelist_current = os.listdir()
 	exist = 0
 
 	for names in filelist_current:
-		if names == 'go_nogo_result.xls':
+		if names == 'go_nogo_result_1904.xls':
 			exist = 1
 			break
 	if exist == 0:
@@ -33,14 +33,15 @@ if __name__ == '__main__':
 		sheet.write(0, 10,'lick in iti (800~)')
 		sheet.write(0, 11,'lick on time(0~800)')
 		sheet.write(0, 12, 'number of no-act trials')
-		book.save('go_nogo_result.xls')
+		sheet.write(0, 13, 'd prime')
+		book.save('go_nogo_result_1904.xls')
 
 
 
 	for raw_file in filelist:
-		if raw_file == 'go_nogo_result.xls':
+		if raw_file == 'go_nogo_result_1904.xls':
 			continue
-		oldwb = xlrd.open_workbook('go_nogo_result.xls')
+		oldwb = xlrd.open_workbook('go_nogo_result_1904.xls')
 		newwb = copy(oldwb)
 		sheet = newwb.get_sheet(0)
 		old_sheet = oldwb.sheet_by_index(0)
@@ -76,6 +77,8 @@ if __name__ == '__main__':
 		else:
 			whichsgo = 1
 
+		#raster(odor1_pump, odor2_airpuff, ' ', "Go_trials_lick", "No-Go_trials_lick")
+
 		odor1_hit = 0
 		odor1_miss = 0
 		odor2_hit = 0
@@ -98,17 +101,18 @@ if __name__ == '__main__':
 			if np.sum(odor1_lick[tri,:]) == 0:
 				empty_odor1 += 1
 				#continue
-			for ms in range(len(odor1_lick[1, :])):
+			#print(np.alen(odor1_pump[1, :]))
+			for ms in range(np.alen(odor1_lick[1, :])):
 				if (ms <= 500) and (ms > before_delay) and (odor1_lick[tri, ms] == 1):
 					lickintime += 1
 				elif (((ms > 500) and (ms <= 1900)) or (ms>=0 and ms <= before_delay)) and (odor1_lick[tri, ms] == 1):
 					lickiniti += 1
-				if (odor1_lick[tri, ms] == 1) and (odor1_action[tri, ms] == 1) and (odor1_did == 0):
-					if (np.sum(odor1_pump[tri, ms:ms + 50]) + np.sum(odor1_airpuff[tri, ms:ms + 50])) < 10:
-						print('beng',tri)
-
-					odor1_hit += 1
-					odor1_did = 1
+				if (odor1_pump[tri, ms] == 1 or odor1_airpuff[tri, ms] == 1) and (odor1_did == 0):
+				#if (odor1_lick[tri, ms] == 1) and (odor1_action[tri, ms] == 1) and (odor1_did == 0):
+					if (np.sum(odor1_pump[tri, ms:ms + 50]) + np.sum(odor1_airpuff[tri, ms:ms + 50])) > 10:
+						#print('beng',ms)
+						odor1_hit += 1
+						odor1_did = 1
 			if odor1_did == 0:
 				odor1_miss += 1
 		for tri in range(len(odor2_lick[:, 1])):
@@ -123,11 +127,13 @@ if __name__ == '__main__':
 				elif (((ms > 500) and (ms <= 1900)) or (ms >= 0 and ms <= before_delay)) and (
 								odor2_lick[tri, ms] == 1):
 					lickiniti += 1
-				if (odor2_lick[tri, ms] == 1) and (odor2_action[tri, ms] == 1) and (odor2_did == 0):
-					if (np.sum(odor2_pump[tri, ms:ms + 50]) + np.sum(odor2_airpuff[tri, ms:ms + 50])) < 10:
-						print('air',tri)
-					odor2_hit += 1
-					odor2_did = 1
+				if (odor2_pump[tri, ms] == 1 or odor2_airpuff[tri, ms] == 1) and (odor2_did == 0):
+				#if (odor2_lick[tri, ms] == 1) and (odor2_action[tri, ms] == 1) and (odor2_did == 0):
+					if (np.sum(odor2_pump[tri, ms:ms + 50]) + np.sum(odor2_airpuff[tri, ms:ms + 50])) > 10:
+					#	print('air',tri)
+						odor2_hit += 1
+					#print(ms)
+						odor2_did = 1
 			if odor2_did == 0:
 				odor2_miss += 1
 		noact_trial = empty_odor1 + empty_odor2
@@ -150,6 +156,11 @@ if __name__ == '__main__':
 			accuracy = hit / (hit + miss)
 		else:
 			accuracy = 0
+
+		# if fa+cr > 0:
+		# 	d_out = dPrime(hit, miss, fa, cr)
+		# else:
+		# 	d_out = 0
 		print(
 			"lick on time : %f\nlick in iti : %f\nwhole trials : %f\nhit : %f\nmiss : %f\naccuracy percentage : %f\nfa : %f\ncorrect reject : %f" % (
 				lickintime, lickiniti, trials, hit, miss, accuracy, fa, cr))
@@ -189,5 +200,6 @@ if __name__ == '__main__':
 			sheet.write(len(saved_files), 10, str(lickiniti))
 			sheet.write(len(saved_files), 11, str(lickintime))
 			sheet.write(len(saved_files), 12, str(noact_trial))
-			os.remove('go_nogo_result.xls')
-			newwb.save('go_nogo_result.xls')
+			sheet.write(len(saved_files), 13, str(d_out['d']))  #d_out['d']))
+			os.remove('go_nogo_result_1904.xls')
+			newwb.save('go_nogo_result_1904.xls')
