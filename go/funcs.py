@@ -23,7 +23,6 @@ def dPrime(hit,miss,fa,cr):
 		farate = 1-halffa
 	if farate == 0:
 		farate = halffa
-
 	out = {}
 	out['d'] = Z(hitrate) - Z(farate)
 	out['b'] = exp((Z(farate)**2 - Z(hitrate)**2)/2)
@@ -72,7 +71,7 @@ def make_list_record(filename):
 	odor1, odor2, lick, pump, action, airpuff = [], [], [], [], [], []
 
 	for line in file:
-		odor1d, odor2d, lickd, pumpd, actiond, airpuffd = line.split()
+		odor1d, odor2d, lickd, pumpd, actiond, airpuffd,*_ = line.split()
 		odor1.append(float(odor1d))
 		odor2.append(float(odor2d))
 		lick.append(float(lickd))
@@ -149,9 +148,9 @@ def raster(go_lick,nogo_lick,title,first_subname,secon_subname):
 	ax2.plot([300, 300], [0, ntr], 'k--', linewidth=1, color='red')
 	ax2.plot([450, 450], [0, ntr], 'k--', linewidth=1, color='green')
 	plt.xticks(xxx, np.array([0, 5, 10, 15]), rotation=0)
-
-	plt.savefig("figures/raster/Raster_of_"+title+".png")
-	plt.close()
+	plt.show()
+	# plt.savefig("figures/raster/Raster_of_"+title+".png")
+	# plt.close()
 	print("===================="+"Raster_of_"+title+".png"+" was successfully created!"+" ======================")
 
 	return
@@ -187,7 +186,7 @@ def raster_laser(go_lick,nogo_lick,title,delay = 0):
 
 	plt.xticks(xxx, np.array([0, 5, 10, 15]), rotation=0)
 
-	plt.savefig("figures/raster/Raster_of_"+title+".png")
+	plt.savefig("C:/Users/manggny/PycharmProjects/my_folder/go/figures/raster/1907_laser/Raster_of_"+title+".png")
 	plt.close()
 	print("===================="+"Raster_of_"+title+".png"+" was successfully created!"+" ======================")
 
@@ -377,6 +376,8 @@ def make_gonogolick(odor1,odor2,lick,delay=0):
 				maxtime = time
 			time = 0
 
+
+
 		#			go_trial_position.append(k)
 		elif ((odor2_changed[k] == 1) and (odor2[k + 20] == 1)):
 			trials += 1
@@ -384,24 +385,26 @@ def make_gonogolick(odor1,odor2,lick,delay=0):
 			if time > maxtime:
 				maxtime = time
 			time = 0
+		elif ((odor1_changed[k] == 1) and (odor1[k + 20] != 1)):
+			print('odor1 has !!!!')
 		if time is not -1:
 			time += 1
 	#maxtime = 20
 
-	odor1_licks = np.zeros((odor1_trial, 1900))
-	odor2_licks = np.zeros((odor2_trial, 1900))
+	odor1_licks = np.zeros((odor1_trial, 1400))
+	odor2_licks = np.zeros((odor2_trial, 1400))
 	now1_trial = -1
 	now2_trial = -1
 	now_trial = 0
 	i=0
-	time = -500
+	time = -1000
 	stop =0
 	while now_trial >= 0 and now_trial < trials:
 
 		while i + time < len(odor1_changed):
 			if now_trial > trials:
 				break
-			if time == -500:
+			if time == -1000:
 				now_posit = i
 			else:
 				now_posit = i + time
@@ -412,13 +415,13 @@ def make_gonogolick(odor1,odor2,lick,delay=0):
 					preodor = odor
 					if preodor == 1:
 						for q in range(preend - delay, preend):
-							if q < 1900:
+							if q < 1400:
 								odor1_licks[now1_trial, q] = 0
 
 
 					elif preodor == 2:
 						for q in range(preend - delay, preend):
-							if q<1900:
+							if q<1400:
 								odor2_licks[now2_trial, q] = 0
 
 				trial_start = 1
@@ -440,13 +443,13 @@ def make_gonogolick(odor1,odor2,lick,delay=0):
 					preodor = odor
 					if preodor == 1:
 						for q in range(preend - delay, preend):
-							if q < 1900:
+							if q < 1400:
 								odor1_licks[now1_trial, q] = 0
 
 
 					elif preodor == 2:
 						for q in range(preend - delay, preend):
-							if q<1900:
+							if q<1400:
 								odor2_licks[now2_trial, q] = 0
 				trial_start = 1
 				licked = 0
@@ -460,7 +463,7 @@ def make_gonogolick(odor1,odor2,lick,delay=0):
 				ndid = 0
 				odor = 2
 				continue
-			if (time < 1700) and (time > -500):
+			if (time < 1200) and (time > -1000):
 				if odor == 1:
 					if lick_changed[now_posit] == 1:
 						licked = 1
@@ -472,7 +475,7 @@ def make_gonogolick(odor1,odor2,lick,delay=0):
 						odor2_licks[now2_trial][delay+time] = lick_changed[now_posit]
 
 			#
-			if time > -400:
+			if time > -1000:
 				time += 1
 			if (stop == 0):
 				i += 1
@@ -515,20 +518,20 @@ def make_gonogolick_ordor(odor1,odor2,lick,delay=0):
 			time += 1
 	maxtime = 20
 
-	odor1_licks = np.zeros((odor1_trial, (maxtime*100+200)))
-	odor2_licks = np.zeros((odor2_trial, (maxtime*100+200)))
+	odor1_licks = np.zeros((odor1_trial, (maxtime*100+600)))
+	odor2_licks = np.zeros((odor2_trial, (maxtime*100+600)))
 	now1_trial = -1
 	now2_trial = -1
 	now_trial = 0
 	i=0
-	time = -500
+	time = -1000
 	stop =0
 	while now_trial >= 0 and now_trial < trials:
 
 		while i + time < len(odor1_changed):
 			if now_trial > trials:
 				break
-			if time == -500:
+			if time == -1000:
 				now_posit = i
 			else:
 				now_posit = i + time
@@ -537,14 +540,14 @@ def make_gonogolick_ordor(odor1,odor2,lick,delay=0):
 				if now_trial > 0:
 					preend = time
 					preodor = odor
-					if preodor == 1:
-						for q in range(preend - delay, preend):
-							odor1_licks[now1_trial, q] = 0
-
-
-					elif preodor == 2:
-						for q in range(preend - delay, preend):
-							odor2_licks[now2_trial, q] = 0
+					# if preodor == 1:
+					# 	for q in range(preend - delay, preend):
+					# 		odor1_licks[now1_trial, q] = 0
+					#
+					#
+					# elif preodor == 2:
+					# 	for q in range(preend - delay, preend):
+					# 		odor2_licks[now2_trial, q] = 0
 				trial_start = 1
 				licked = 0
 				i = now_posit
@@ -563,14 +566,14 @@ def make_gonogolick_ordor(odor1,odor2,lick,delay=0):
 				if now_trial > 0:
 					preend = time
 					preodor = odor
-					if preodor == 1:
-						for q in range(preend - delay, preend):
-							odor1_licks[now1_trial, q] = 0
+					#if preodor == 1:
+						#for q in range(preend - delay, preend):
+							#odor1_licks[now1_trial, q] = 0
 
 
-					elif preodor == 2:
-						for q in range(preend - delay, preend):
-							odor2_licks[now2_trial, q] = 0
+				#	elif preodor == 2:
+						#for q in range(preend - delay, preend):
+						#	odor2_licks[now2_trial, q] = 0
 				trial_start = 1
 				licked = 0
 				i = now_posit
@@ -584,7 +587,7 @@ def make_gonogolick_ordor(odor1,odor2,lick,delay=0):
 				ndid = 0
 				odor = 2
 				continue
-			if (time < 1700) and (time > -500):
+			if (time < 1700) and (time > -1000):
 				if odor == 1:
 
 
@@ -598,7 +601,7 @@ def make_gonogolick_ordor(odor1,odor2,lick,delay=0):
 						odor2_licks[now2_trial][delay+time] = lick_changed[now_posit]
 
 			#
-			if time > -400:
+			if time > -1000:
 				time += 1
 			if (stop == 0):
 				i += 1
@@ -650,20 +653,20 @@ def div_by_odor(odor1,odor2,action,air,pump,laser,delay=0):
 			trials += 1
 			odor2_trial += 1
 	#print(odor1_trial)
-	odor1_action = np.zeros((odor1_trial, 1900))
-	odor2_action = np.zeros((odor2_trial, 1900))
-	odor1_airpuff = np.zeros((odor1_trial, 1900))
-	odor2_airpuff = np.zeros((odor2_trial, 1900))
-	odor1_pump = np.zeros((odor1_trial, 1900))
-	odor2_pump = np.zeros((odor2_trial, 1900))
-	odor1_laser = np.zeros((odor1_trial, 1900))
-	odor2_laser = np.zeros((odor2_trial, 1900))
+	odor1_action = np.zeros((odor1_trial, 1400))
+	odor2_action = np.zeros((odor2_trial, 1400))
+	odor1_airpuff = np.zeros((odor1_trial, 1400))
+	odor2_airpuff = np.zeros((odor2_trial, 1400))
+	odor1_pump = np.zeros((odor1_trial, 1400))
+	odor2_pump = np.zeros((odor2_trial, 1400))
+	odor1_laser = np.zeros((odor1_trial, 1400))
+	odor2_laser = np.zeros((odor2_trial, 1400))
 
 	now1_trial = -1
 	now2_trial = -1
 	now_trial = 0
 	i=0
-	time = -500
+	time = -1000
 	stop =0
 
 	while i + time < len(odor1_changed):
@@ -671,7 +674,7 @@ def div_by_odor(odor1,odor2,action,air,pump,laser,delay=0):
 		if now_trial > trials:
 			break
 
-		if time == -500:
+		if time == -1000:
 			now_posit = i
 			if laser[now_posit] == 1:
 				c += 1
@@ -722,7 +725,7 @@ def div_by_odor(odor1,odor2,action,air,pump,laser,delay=0):
 				preodor = odor
 				if preodor == 1:
 					for q in range(preend-delay, preend):
-						if q < 1900:
+						if q < 1400:
 							odor1_action[now1_trial, q] = 0
 							odor1_airpuff[now1_trial, q] = 0
 							odor1_pump[now1_trial, q] = 0
@@ -730,7 +733,7 @@ def div_by_odor(odor1,odor2,action,air,pump,laser,delay=0):
 					#print(np.sum(odor1_laser[now1_trial,200:]))
 				elif preodor == 2:
 					for q in range(preend-delay, preend):
-						if q < 1900:
+						if q < 1400:
 							odor2_action[now2_trial, q] = 0
 							odor2_airpuff[now2_trial, q] = 0
 							odor2_pump[now2_trial, q] = 0
@@ -749,7 +752,7 @@ def div_by_odor(odor1,odor2,action,air,pump,laser,delay=0):
 			odor = 2
 			continue
 
-		if (time != -500) and (time < 1000):
+		if (time != -1000) and (time < 800):
 			if odor == 1:
 				odor1_action[now1_trial,delay+time] = action[now_posit]
 				odor1_airpuff[now1_trial,delay+time] = air[now_posit]
@@ -764,7 +767,7 @@ def div_by_odor(odor1,odor2,action,air,pump,laser,delay=0):
 
 
 		#
-		if time > -400:
+		if time > -1000:
 			time += 1
 		if (stop == 0):
 			i += 1

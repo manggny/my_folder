@@ -66,11 +66,12 @@ def div_by_cue(cal_time,cal_data,cue1,cue2,cue_hz):
 			trial_start = round(i/20)
 			for k in range(trial_start-20,trial_start+20):
 				if np.sum(cal_time[0:k])<=t and np.sum(cal_time[0:k+1])>t:
-					cue1_cal[now_cue1,0:100] = cal_data[k-100:k]
-					try:
-						cue1_cal[now_cue1,100:700] = cal_data[k:k+600]
-					except:
-						continue
+					if len(cal_data[k:k + 600]) < 600:
+						cue1_cal = np.delete(cue1_cal,now_cue1,0)
+						print('cue1' + str(now_cue1))
+					else:
+						cue1_cal[now_cue1, 0:100] = cal_data[k - 100:k]
+						cue1_cal[now_cue1, 100:] = cal_data[k:k + 600]
 			now_cue1 += 1
 			cue_ordor.append(1)
 			#print('1!')
@@ -79,11 +80,12 @@ def div_by_cue(cal_time,cal_data,cue1,cue2,cue_hz):
 			trial_start = round(i / 20)
 			for k in range(trial_start-20,trial_start+20):
 				if np.sum(cal_time[0:k]) <= t and np.sum(cal_time[0:k + 1]) > t:
-					cue2_cal[now_cue2, 0:100] = cal_data[k - 100:k]
-					try:
-						cue2_cal[now_cue2, 100:700] = cal_data[k:k + 600]
-					except:
-						continue
+					if len(cal_data[k:k + 600]) < 600:
+						cue2_cal = np.delete(cue2_cal,now_cue2,0)
+						print('cue2' + str(now_cue2))
+					else:
+						cue2_cal[now_cue2, 0:100] = cal_data[k - 100:k]
+						cue2_cal[now_cue2, 100:] = cal_data[k:k + 600]
 
 			now_cue2 += 1
 			cue_ordor.append(2)
@@ -101,19 +103,21 @@ def div_by_cue(cal_time,cal_data,cue1,cue2,cue_hz):
 if __name__=="__main__":
 	#### select data and basic setting for results####
 	path = 'F:/Insula-Gcamp6/record/result_pkl/'
-	beha_path = 'F:/Insula-Gcamp6/behav/after 04/gonogorecord/'
-	cue_file = '#f3_gonogo50record__r(red)_left(blue,weak)_190704-Event.pkl'
-	cal_file = '#f3_gonogo50record__r(red)_left(blue,weak)_190704.pkl'
+	beha_path = 'F:/Insula-Gcamp6/behav/gonogo-record/'
+	cue_file = '#5_odor2_20%_right(red)_left(blue)_190505-Event.pkl'
+	cal_file = '#5_odor2_20%_right(red)_left(blue)_190505.pkl'
 	cuename = path + cue_file
 	calname = path + cal_file
-	behavname = beha_path + '#f3_gonogorecord_50_d1_odor1_0704_1'
+	behavname = beha_path + '#5_gonogo20record_d1_odor1_4.lvm'
+	cal_channal = 3
 	result_path = 'figures/record_results/'
 	f_name,_ = cal_file.split('.')
 	f_name = result_path + f_name
 
+
 	##### basic processing for raw data
 	cue,cal = load_tdms(cuename,calname)
-	cue1_cal,cue2_cal,trial_ordor = div_by_cue(cal[0],cal[2],cue[1],cue[2],1000)
+	cue1_cal,cue2_cal,trial_ordor = div_by_cue(cal[0],cal[cal_channal],cue[1],cue[2],1000)
 	print('!!!',sum(cue[1]),sum(cue[2]))
 	print("@@@",sum(cal[3]))
 	#print(cue[1])
@@ -124,7 +128,7 @@ if __name__=="__main__":
 	odor1_action, odor1_airpuff, odor1_pump, odor1_laser, odor2_action, odor2_airpuff, odor2_pump, odor2_laser = div_by_odor(
 		odor1, odor2, action, airpuff, pump, laser, delay=200)
 	raster(odor1_pump, odor2_airpuff, ' ', "Go_trials_lick", "No-Go_trials_lick")
-	trial_time = 700  # now the basic time for one trial is 14 second(700*0.02)
+	trial_time = 200  # now the basic time for one trial is 14 second(700*0.02)
 	odor1_pump_trials = np.array([])# 0 for no-react, 1 for hit in odor1/2 trials
 	odor1_nopump_trials = np.array([]) # or airpuff
 	odor1_miss_trials = np.array([]) # trials no-react at all
@@ -139,7 +143,7 @@ if __name__=="__main__":
 	for k in range(np.alen(cue2_cal)):
 		cue2_cal[k,:] = z_score(cue2_cal[k,0:100],cue2_cal[k,:])
 
-	for i in range(np.alen(odor1_pump[:,1])):
+	for i in range(np.alen(cue1_cal[:,1])):
 		ac = np.diff(odor1_action[i,:])
 		for j in range(np.alen(ac)):
 			if ac[j] == 1:
@@ -165,7 +169,7 @@ if __name__=="__main__":
 			else:
 				odor1_nopump_trials = np.vstack((odor1_nopump_trials, cue1_cal[i, :]))
 	#print(np.alen(odor2_pump[:,1]))
-	for i in range(np.alen(odor2_pump[:,1])):
+	for i in range(np.alen(cue2_cal[:,1])):
 		ac = np.diff(odor2_action[i, :])
 		for j in range(np.alen(ac)):
 			if ac[j] == 1:
@@ -240,11 +244,11 @@ if __name__=="__main__":
 	cue1_mean_cal = np.zeros(trial_time)
 	cue2_mean_cal = np.zeros(trial_time)
 
-	x1 = np.linspace(-2, 12, np.alen(cue1_mean_cal))
+	x1 = np.linspace(-2, 2, np.alen(cue1_mean_cal))
 	for k in range(trial_time):
 		cue1_mean_cal[k] = np.mean(cue1_cal[:,k])
 		cue2_mean_cal[k] = np.mean(cue2_cal[:, k])
-	if np.alen(odor1_pump_trials) > 5:
+	if np.alen(odor1_pump_trials) > 1:
 		if np.ndim(odor1_pump_trials) is not 1:
 			for k in range(trial_time):
 				odor1_pump_mean[k] = np.mean(odor1_pump_trials[:,k])
@@ -253,7 +257,7 @@ if __name__=="__main__":
 			plt.plot(x1, odor1_pump_mean, 'r', label='odor1_hit')
 			plt.fill_between(x1, odor1_pump_mean - odor1_pump_error, odor1_pump_mean + odor1_pump_error, alpha=0.3,
 						 color='r')
-	if np.alen(odor1_nopump_trials) > 5:
+	if np.alen(odor1_nopump_trials) > 1:
 		if np.ndim(odor1_nopump_trials) is not 1:
 			for k in range(trial_time):
 				odor1_nopump_mean[k] = np.mean(odor1_nopump_trials[:, k])
@@ -261,7 +265,7 @@ if __name__=="__main__":
 			plt.plot(x1, odor1_nopump_mean, 'b', label='odor1_nopump')
 			plt.fill_between(x1, odor1_nopump_mean - odor1_nopump_error, odor1_nopump_mean + odor1_nopump_error, alpha=0.3,
 						 color='b')
-	if np.alen(odor1_miss_trials) > 5:
+	if np.alen(odor1_miss_trials) > 1:
 
 		if np.ndim(odor1_miss_trials) is not 1:
 			print(np.alen(odor1_miss_trials))
@@ -274,7 +278,11 @@ if __name__=="__main__":
 	plt.xlabel('Time(s)')
 	plt.ylabel('z-score')
 	plt.legend(loc='upper right')
-	plt.savefig(f_name+"_odor1l.png")
+	if cal_channal == 2:
+		f_name1 = f_name+"_odor1r.png"
+	elif cal_channal == 3:
+		f_name1 = f_name + "_odor1l.png"
+	plt.savefig(f_name1)
 	plt.close()
 	if np.alen(odor2_pump_trials) > 5:
 		if np.ndim(odor2_pump_trials) is not 1:
@@ -305,31 +313,12 @@ if __name__=="__main__":
 	plt.xlabel('Time(s)')
 	plt.ylabel('z-score')
 	plt.legend(loc='upper right')
-	plt.savefig(f_name+"_odor2l.png")
+	if cal_channal == 2:
+		f_name2 = f_name+"_odor2r.png"
+	elif cal_channal == 3:
+		f_name2 = f_name + "_odor2l.png"
+	plt.savefig(f_name2)
 	print('!!!')
 
 	plt.close()
-	# fig = plt.figure()
-	# ax1 = fig.add_subplot(121)
-	# # print('odor2miss'+str(np.alen(odor2_pump_trials)))
-	# #
-	# # im = ax1.imshow(np.uint8(odor1_pump_trials), aspect='auto',cmap=plt.cm.hot_r)
-	# # plt.colorbar(im)
-	# # plt.show()
-
-	#raster(x1, odor1_pump_trials,'heat','x','y')
-
-
-
-
-	#print(np.alen(cue1_cal[1,:]))
-
-
-	#print(len(trial_ordor),len(behav_ordor))
-	#for i in range(len(trial_ordor)):
-	#	if trial_ordor[i] == behav_ordor[i]:
-	#		print('ok')
-	#	else:
-	#		print(trial_ordor,behav_ordor)
-
 

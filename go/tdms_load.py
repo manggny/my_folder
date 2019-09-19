@@ -9,7 +9,7 @@ import os,sys
 import numpy as np
 import pickle as pkl
 
-path = 'F:/Insula-Gcamp6/record/gonogo day1'
+path = 'F:/Insula-Gcamp6/record/gonogorecord_2odor/'
 par_path = 'F:/Insula-Gcamp6/record'
 r_path = 'F:/Insula-Gcamp6/record/result_pkl'
 filelist = os.listdir(path)
@@ -22,6 +22,7 @@ for f in filelist:
 	if w_filename in result_list:
 		print(w_filename + ' is already exist! skip..')
 		continue
+	print(w_filename + ' is started!')
 	file = TdmsFile(filepath)
 	output = open(par_path+'/result_pkl/'+filename+'.pkl', 'wb')
 	pkl.dump(file, output)

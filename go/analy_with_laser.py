@@ -8,14 +8,14 @@ from go.funcs import diff, make_list,dPrime
 from go.funcs import raster_laser, div_by_laser,first_lick_plot,make_gonogolick,div_by_odor,averplot
 
 if __name__ == '__main__':
-	path = "F:/ACC-Camk2/0109~gonogo/gonogo test with laser"#D:\expdata\laser"#F:/gonogodata/nodelay/laser"#F:/gonogodata/nodelay/laser"
+	path = "F:/Insula-Gcamp6/behav/after 04/gonogo_laser"#D:\expdata\laser"#F:/gonogodata/nodelay/laser"#F:/gonogodata/nodelay/laser"
 	filelist = os.listdir(path)
 	filelist_current = os.listdir()
 	exist = 0
 
 	for names in filelist_current:
 
-		if names == 'go_nogo_result_laser.xls':
+		if names == 'go_nogo_result_laser_08.xls':
 			exist = 1
 			break;
 		if names == "lateral":
@@ -49,12 +49,12 @@ if __name__ == '__main__':
 		sheet.write(0, 23, 'odor2 no-laser_lick')
 		sheet.write(0, 24, 'odor1 no-laser_firstlick(ms)')
 		sheet.write(0, 25, 'odor2 no-laser_firstlick(ms)')
-		book.save('go_nogo_result_laser.xls')
+		book.save('go_nogo_result_laser_08.xls')
 
 	for raw_file in filelist:
-		if raw_file == 'go_nogo_result_laser.xls':
+		if raw_file == 'go_nogo_result_laser_08.xls':
 			continue
-		oldwb = xlrd.open_workbook('go_nogo_result_laser.xls')
+		oldwb = xlrd.open_workbook('go_nogo_result_laser_08.xls')
 		newwb = copy(oldwb)
 		sheet = newwb.get_sheet(0)
 		old_sheet = oldwb.sheet_by_index(0)
@@ -63,14 +63,15 @@ if __name__ == '__main__':
 	#	print("================================================ start =======================================")
 
 		odor_time = 100
-		delay = 0
+		delay = 200
 		action_time = 200
 		relative_time = odor_time + delay + action_time
 
 		print("================================================ start =======================================")
 
 		filename = path + "/" + raw_file
-		name, _ = raw_file.split(".")
+		name, *_ = raw_file.split(".")
+		print(name)
 	#	print(name)
 
 		if name in saved_files:
@@ -269,8 +270,8 @@ if __name__ == '__main__':
 		print(ntr,trn2)
 		print(
 			"odor1:\nlaser lick : %f\nno-laser lick : %f\nodor2:\nlaser lick: %f\nno-laser lick : %f\n" % (
-			np.sum(odor1_laser_lick[:,200:500])/tr, np.sum(odor1_nolaser_lick[:,200:500])/trn, np.sum(odor2_laser_lick[:,200:500])/ntr,
-			np.sum(odor2_nolaser_lick[:,200:500])/trn2))
+			np.sum(odor1_laser_lick[:,:500])/tr, np.sum(odor1_nolaser_lick[:,:500])/trn, np.sum(odor2_laser_lick[:,:500])/ntr,
+			np.sum(odor2_nolaser_lick[:,:500])/trn2))
 
 		for i in saved_files:
 			if i == name:
@@ -317,8 +318,8 @@ if __name__ == '__main__':
 			sheet.write(len(saved_files), 23, str(np.sum(odor2_nolaser_lick[:,200:500])/real_trn2))
 			sheet.write(len(saved_files), 24, str(odor1_aver_nolaser_first))
 			sheet.write(len(saved_files), 25, str(odor2_aver_nolaser_first))
-			os.remove('go_nogo_result_laser.xls')
-			newwb.save('go_nogo_result_laser.xls')
+			os.remove('go_nogo_result_laser_08.xls')
+			newwb.save('go_nogo_result_laser_08.xls')
 		i = 0
 
 		for j in range(tr):

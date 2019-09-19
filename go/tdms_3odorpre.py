@@ -142,8 +142,8 @@ if __name__=="__main__":
 	#### select data and basic setting for results####
 	path = 'F:/Insula-Gcamp6/record/result_pkl/'
 	beha_path = 'F:/ACC-Camk2/GCAMP6/record_gonogo/'
-	cue_file = '#m3_odor3_right(red)_left(blue)_190502-Event.pkl'
-	cal_file = '#m3_odor3_right(red)_left(blue)_190502.pkl'
+	cue_file = '#m3_gonogo3odor__r(red)_left(blue)_190512-Event.pkl'
+	cal_file = '#m3_gonogo3odor__r(red)_left(blue)_190512.pkl'
 	cuename = path + cue_file
 	calname = path + cal_file
 	#behavname = beha_path + '#5_gca_ai+accgonogorecord_0120_odor1_4.lvm'
@@ -153,7 +153,7 @@ if __name__=="__main__":
 
 	##### basic processing for raw data
 	cue,cal = load_tdms(cuename,calname)
-	cue1_cal,cue2_cal,cue3_cal,trial_ordor = div_by_cue(cal[0],cal[3],cue[1],cue[2],cue[3],1000)
+	cue1_cal,cue2_cal,cue3_cal,trial_ordor = div_by_cue(cal[0],cal[2],cue[1],cue[2],cue[3],1000)
 	print('!!!',sum(cue[1]),sum(cue[2]),sum(cue[3]))
 
 	dif_cue1 = np.abs(np.diff(cue[1]))
@@ -201,7 +201,7 @@ if __name__=="__main__":
 	plt.xlabel('Time(s)')
 	plt.ylabel('z-score')
 	plt.legend(loc='upper right')
-	plt.savefig(f_name + "left.png")
+	plt.savefig(f_name + "right.png")
 	plt.close()
 	#hm1 = HM(cue1_cal[:,0:250].tolist())
 	#hm2 = HM(cue2_cal[:,0:250].tolist())

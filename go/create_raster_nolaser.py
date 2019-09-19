@@ -8,7 +8,7 @@ from go.funcs import div_by_laser,make_gonogolick,div_by_odor,raster
 
 
 if __name__ == '__main__':
-	path = "F:/Insula-Gcamp6/behav/gonogo"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/12.23_"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_GTACR1/onlygo"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/habi"
+	path = "F:/Insula-Gcamp6/behav/gonogo-record"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/12.23_"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_GTACR1/onlygo"#F:/ACC-Camk2/Gono-go/behavior_trainning/Camk2_chr2/habi"
 	filelist = os.listdir(path)
 	filelist_current = os.listdir()
 	exist = 0

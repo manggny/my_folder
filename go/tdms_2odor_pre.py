@@ -109,9 +109,9 @@ def div_by_cue(cal_time,cal_data,cue1,cue2,cue_hz):
 if __name__=="__main__":
 	#### select data and basic setting for results####
 	path = 'F:/Insula-Gcamp6/record/result_pkl/'
-	beha_path = 'F:/ACC-Camk2/GCAMP6/record_gonogo/'
-	cue_file = '#m3_gonogopre__r(red)_left(blue)_190506-Event.pkl'
-	cal_file = '#m3_gonogopre__r(red)_left(blue)_190506.pkl'
+	#beha_path = 'F:/ACC-Camk2/GCAMP6/record_gonogo/'
+	cue_file = '#f3_gonogo50record__r(red)_left(blue,weak)_190704-Event.pkl'
+	cal_file = '#f3_gonogo50record__r(red)_left(blue,weak)_190704.pkl'
 	cuename = path + cue_file
 	calname = path + cal_file
 	#behavname = beha_path + '#5_gca_ai+accgonogorecord_0120_odor1_4.lvm'
@@ -134,7 +134,7 @@ if __name__=="__main__":
 		cue2_cal[k,:] = z_score(cue2_cal[k,0:100],cue2_cal[k,:])
 
 
-	trial_time = 250
+	trial_time = 600
 	cue1_mean_cal = np.zeros(trial_time)
 	cue1_error_cal = np.zeros(trial_time)
 	cue2_mean_cal = np.zeros(trial_time)
