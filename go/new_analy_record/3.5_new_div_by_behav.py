@@ -124,6 +124,32 @@ def normalizing_z(cal):
 		result.append((cal[i]-f0)/q)
 	return result
 
+def normalizing(trial_data,baseline=50):
+	zero = 0
+	f0 = np.mean(trial_data[0:baseline])
+	result = np.zeros(len(trial_data))
+	for i in range(len(trial_data)):
+		if trial_data[i] == 0:
+			print(trial_data[i],'zero!!',i)
+			zero = 1
+			return result,zero
+		result[i] = (trial_data[i]-f0)/trial_data[i]
+	return result,zero
+
+def norm_alltrials(trial_data,mean_median):
+	if mean_median == 0:
+		print('mean is zero!!')
+	zero = 0
+	result = np.zeros(len(trial_data))
+	for i in range(len(trial_data)):
+		if trial_data[i] == 0:
+			print(trial_data[i],'zero!!',i)
+			zero = 1
+			return result,zero
+
+		result[i] = (trial_data[i]-mean_median)/trial_data[i]
+	return result,zero
+
 def unpickle(infile):
 	import pickle
 	with open(infile, 'rb') as fo:
@@ -134,8 +160,8 @@ def unpickle(infile):
 
 if __name__=="__main__":
 	#### select data and basic setting for results####
-	pkl_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/after_optimize/after_cleaning/after_delete/gonogo50/'
-	result_path = pkl_path+'/after_behav/'
+	pkl_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/after_obt_clean_no_nom/50/'
+	result_path = pkl_path+'/after_div/'
 
 	filelist = os.listdir(pkl_path)
 	filelist_result = os.listdir(result_path)
@@ -156,6 +182,7 @@ if __name__=="__main__":
 			continue
 		result_name = result_path + f_name + '_behav.pkl'
 		result_dic = {'odor1': [], 'odor2': [], 'odor1_lick': [], 'odor2_lick': [], 'odor1_pre': [], 'odor2_pre': []}
+		print('start!', f_name)
 
 		##### basic processing for raw data
 		raw_data = unpickle(filename)
@@ -169,9 +196,19 @@ if __name__=="__main__":
 		airpuff = raw_data['air']
 		cal = raw_data['cal_data']
 
+		all_mean = np.mean(cal)
+		print('all mean is : ', all_mean)
+		for i in range(np.alen(cal[:,1])):
+
+			cal[i,:],zero = normalizing(cal[i,:],baseline=50)
+			if zero == 1:
+				cal = np.delete(cal,i,axis=0)
+
+		print(np.min(cal),np.max(cal))
+
 		for i in range(np.alen(cal[:,1])):
 			if odor_list[i] == 1:
-				if np.sum(lick[i,:])>0 and (np.sum(pump[i,:])) > 40:
+				if np.sum(lick[i,:])>0 and (np.sum(pump[i,:])) > 10:
 					if np.alen(odor1_pump_trials) == 0:
 						odor1_pump_trials = cal[i, :]
 					else:
@@ -185,7 +222,7 @@ if __name__=="__main__":
 
 
 			elif odor_list[i] == 2:
-				if np.sum(lick[i, :]) > 0 and (np.sum(airpuff[i, :])) > 40:
+				if np.sum(lick[i, :]) > 0 and (np.sum(airpuff[i, :])) > 10:
 					if np.alen(odor2_pump_trials) == 0:
 						odor2_pump_trials = cal[i, :]
 					else:
@@ -206,6 +243,7 @@ if __name__=="__main__":
 		result_dic['odor1'].append(odor1_miss_trials)
 		result_dic['odor2'].append(odor2_pump_trials)
 		result_dic['odor2'].append(odor2_miss_trials)
+		print(np.shape(odor2_miss_trials))
 
 		output = open(result_name, 'wb')
 		pkl.dump(result_dic, output)

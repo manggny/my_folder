@@ -217,8 +217,8 @@ def unpickle(infile):
 	return data
 
 if __name__=="__main__":
-	pkl_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/after_optimize/after_cleaning/'
-	result_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/after_optimize/after_cleaning/after_delete/'
+	pkl_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/after_obt_clean_no_nom/50/'
+	result_path = pkl_path+'after_delete/'
 
 	filelist = os.listdir(pkl_path)
 	filelist_result = os.listdir(result_path)

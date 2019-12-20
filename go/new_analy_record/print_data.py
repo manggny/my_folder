@@ -19,7 +19,9 @@ def normalizing_p(trial_data,part):
 if __name__=="__main__":
 	test = np.zeros(700)
 
-	pkls_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/after_optimize/after_cleaning/after_delete/gonogo20/after_behav/goods/merged/'
+	pkls_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/after_obt_clean_no_nom/50/after_div/'#/merged/'
+
+	filename_result = 'result_50.xls'
 
 	filelist = os.listdir(pkls_path)
 	k = 0
@@ -85,30 +87,6 @@ if __name__=="__main__":
 		print('odor1 hit', np.shape(odor1_hit))
 		print('odor2 cr', np.shape(odor2_cr))
 
-		for i in range(np.alen(odor1_hit)):
-			odor1_hit[i,:] = normalizing_p(odor1_hit[i,:],odor1_hit[i,0:100])
-
-		if np.alen(odor1_m)> 0 and np.alen(odor1_m) < 700:
-			for i in range(np.alen(odor1_m)):
-				odor1_m[i, :] = normalizing_p(odor1_m[i,:],odor1_m[i, 0:100])
-		elif np.alen(odor1_m) == 700 or np.alen(odor1_m) == 1:
-			odor1_m[:] = normalizing_p(odor1_m[:], odor1_m[0:100])
-		else:
-			odor1_m = np.array([])
-
-		print(odor2_cr.shape)
-		for i in range(np.alen(odor2_cr)):
-			odor2_cr[i, :] = normalizing_p(odor2_cr[i,:],odor2_cr[i, 0:100])
-
-
-		if np.alen(odor2_hit)> 0 and np.alen(odor2_hit) < 700:
-			for i in range(np.alen(odor2_hit)):
-				odor2_hit[i, :] = normalizing_p(odor2_hit[i,:],odor2_hit[i, 0:100])
-		elif np.alen(odor2_hit) == 700 or np.alen(odor2_hit) == 1:
-			odor2_hit[:] = normalizing_p(odor2_hit[:], odor2_hit[0:100])
-		else:
-			odor2_hit = np.array([])
-
 		odor2_cr_mean = np.zeros(700)
 		odor1_m_mean = np.zeros(700)
 		odor1_miss_mean = np.zeros(700)
@@ -142,7 +120,7 @@ if __name__=="__main__":
 		print('odor2 fa', np.shape(odor2_hit))
 		print('odor1 miss', np.shape(odor1_miss))
 		# print('odor1 noact', np.shape(odor1_noact))
-		oldwb = xlrd.open_workbook('result_20.xls')
+		oldwb = xlrd.open_workbook(filename_result)
 		newwb = copy(oldwb)
 		sheet = newwb.get_sheet(0)
 		sheet.write(0, k, file)
@@ -153,14 +131,14 @@ if __name__=="__main__":
 
 #		for i in range(0,100):
 
-		sheet.write(1, k, np.mean(odor1_hit_mean[100:115]))
-		sheet.write(1 , k + 20, np.mean(odor1_m_mean[100:115]))
-		sheet.write(5, k, np.mean(odor2_cr_mean[100:115]))
-		sheet.write(5, k + 20, np.mean(odor2_hit_mean[100:115]))
+		sheet.write(1, k, np.mean(odor1_hit_mean[50:125]))
+		sheet.write(1 , k + 20, np.mean(odor1_m_mean[50:125]))
+		sheet.write(5, k, np.mean(odor2_cr_mean[50:125]))
+		sheet.write(5, k + 20, np.mean(odor2_hit_mean[50:125]))
 		print(odor2_hit_mean[i])
 		k += 1
-		os.remove('result_20.xls')
-		newwb.save('result_20.xls')
+		os.remove(filename_result)
+		newwb.save(filename_result)
 
 	t_mean = np.zeros(700)
 

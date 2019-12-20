@@ -16,14 +16,14 @@ def unpickle(infile):
 
 
 if __name__ == "__main__":
-	pkls_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/after_optimize/after_cleaning/after_delete/gonogo20/after_behav/goods/'
+	pkls_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/after_obt_clean_no_nom/80/after_div/'
 	result_path = pkls_path + '/merged/'
 
 	#result_name = result_path + 'all(5)_AI_50%_-0.2-0.2_record_mean_result'
-	file1='#f1_gonogo80record__r(red)_left(blue,weak)_190705_cleaned_r_deleted_good_behav.pkl'
-	file2 = '#f1_gonogo80record__r(red)_left(blue,weak)_190706_cleaned_r_deleted_good_behav.pkl'
-	file3 = '#f1_gonogo80record__r(red)_left(blue)_190707_cleaned_r_deleted_good_behav.pkl'
-	files = [file1,file2,file3]
+	file1='#gcam8_gonogo80record_d1_r(red)_left(blue)_190827_cleaned_r_behav.pkl'
+	file2 = '#gcam8_gonogo80record_d2_r(red)_left(blue)_190828_cleaned_r_behav.pkl'
+	#file3 = '#f2_gonogo80record__r(red)_left(blue)_190707_cleaned_r_behav.pkl'
+	files = [file1,file2]#,file3]
 	#file3 = '#f3_gonogo80record__r(red)_left(blue)_190708_opt_r_behav.pkl'
 	pkls = []
 	result_dic = {'odor1':[],'odor2':[]}

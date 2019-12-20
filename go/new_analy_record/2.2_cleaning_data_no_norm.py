@@ -223,7 +223,7 @@ def opt_cal(cal):
 		plt.plot(xdata, y2_r, 'r--')
 		y3_r = []
 		for i in range(len(y2_r)):
-			y3_r.append(y_r[i] - y2_r[i])
+			y3_r.append((y_r[i] - y2_r[i])+100)
 		plt.plot(xdata, y3_r, 'g-')
 		print('this is right!!')
 		plt.show()
@@ -238,7 +238,7 @@ def opt_cal(cal):
 		plt.plot(xdata, y2_l, 'r--')
 		y3_l = []
 		for i in range(len(y2_l)):
-			y3_l.append(y_l[i] - y2_l[i])
+			y3_l.append((y_l[i] - y2_l[i])+100)
 
 		plt.plot(xdata, y3_l, 'g-')
 		print('this is left!!')
@@ -264,7 +264,7 @@ if __name__=="__main__":
 	pkl_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/'
 	Event_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/'
 	behav_path = 'F:/Insula-Gcamp6/behav/after 04/record_for_analy/'
-	result_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/after_obt_and_clean/'
+	result_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/after_obt_clean_no_nom/'
 
 	filelist = os.listdir(pkl_path)
 	filelist_result = os.listdir(result_path)
@@ -298,17 +298,14 @@ if __name__=="__main__":
 		all_lick, all_pump, all_airpuff, odor_list = div_by_behav(odor1, odor2, airpuff, pump, lick, delay=2)
 
 
-		raster(all_lick, all_pump, name, "all lick", "all pump")
-		raster(all_lick,all_airpuff, name, "all lick", "all air")
+		# raster(all_lick, all_pump, name, "all lick", "all pump")
+		# raster(all_lick,all_airpuff, name, "all lick", "all air")
 		cue, cal = load_tdms(Event_filename,filename)
 
 		## 여기서 cal 옵티마이즈!
 
 		cal_r,cal_l = opt_cal(cal)
 		print(type(cal_l),type(cal[3]))
-
-		cal_r = normalizing_z(cal_r)
-		cal_l = normalizing_z(cal_l)
 
 		if np.alen(cal_r) > 1:
 			cue1_cal_r, cue2_cal_r, all_cue_cal_r, cue_order_r = div_by_cue(cal[0], cal_r, cue[1], cue[2], 1000, delay=2)

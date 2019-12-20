@@ -46,24 +46,35 @@ def normalizing_z(cal):
 	return result
 
 if __name__=="__main__":
-	pkl_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/after_optimize/gonogo20/'
+	pkl_path = 'F:/Insula-Gcamp6/record/result_pkl/new_all/190925_pkls/after_obt_and_clean/80/after_div/'
 
 	### setting###
-	filename = '#5_Lacc(r,2)+rai(b,3)_0120_gonogotest_opt_r.pkl'
+	filename = '#f1_gonogo80record__r(red)_left(blue,weak)_190705_cleaned_l_behav.pkl'
 
 	name,_ = filename.split('.')
 	cal = unpickle(pkl_path+filename)
+	# result_dic['odor1'].append(odor1_pump_trials)
+	# result_dic['odor1'].append(odor1_miss_trials)
+	# result_dic['odor2'].append(odor2_pump_trials)
+	# result_dic['odor2'].append(odor2_miss_trials)
 
-	xdata = np.linspace(0, round(len(cal[0])/50), len(cal[0]))
 
-	y = cal[1]
+	y = cal['odor1'][0]
+	y1 = cal['odor1'][0]
+	y2 = cal['odor1'][0]
+	y3 = cal['odor1'][0]
+	xdata = np.linspace(0, round(len(y) / 50), len(y))
 	plt.plot(xdata, y, 'b-')
+	plt.plot(xdata, y1, 'r-')
+	plt.plot(xdata, y2, 'y-')
+	plt.plot(xdata, y3, 'g-')
+
 
 	print(np.median(y))
-	y2 = normalizing_z(y)
-	for i in range(len(y2)):
-		y2[i] = y2[i] + 3
-	plt.plot(xdata, y2, 'r--')
+	# y2 = normalizing_z(y)
+	# for i in range(len(y2)):
+	# 	y2[i] = y2[i] + 3
+	# plt.plot(xdata, y2, 'r--')
 
 	plt.show()
 
